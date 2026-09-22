@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Damage Record Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #0d0f12;
+            color: #ffffff;
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #1a1c23;
+            width: 100%;
+            max-width: 400px;
+            padding: 30px 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .badge-container {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            background-color: rgba(204, 255, 0, 0.1);
+            color: #ccff00;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: 1px solid #ccff00;
+            display: inline-block;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            font-size: 26px;
+            text-transform: uppercase;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            color: #ffffff;
+        }
+
+        h1 span {
+            color: #ccff00;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 10px;
+            color: #8b92a5;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            background-color: #23252f;
+            border: 1px solid #323644;
+            color: #ffffff;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #ccff00;
+        }
+
+        input::placeholder {
+            color: #5a6072;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            background-color: #23252f;
+            border: 1px solid #323644;
+            color: #ffffff;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background-color: #323644;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background-color: #ccff00;
+            color: #000000;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 16px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 10px;
+            transition: transform 0.1s, opacity 0.3s;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #media-container {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            background: #000;
+            display: none;
+        }
+
+        video, img {
+            width: 100%;
+            display: block;
+        }
+
+        #status {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 15px;
+            color: #ccff00;
+            min-height: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="badge-container">
+            <span class="badge">Damage Control</span>
+        </div>
+        <h1>Damage Record<br><span>Tracker</span></h1>
+
+        <div class="form-group">
+            <label>REPORTED BY</label>
+            <input type="text" id="reportedBy" placeholder="e.g. John Doe">
+        </div>
+
+        <div class="form-group">
+            <label>ITEM NAME</label>
+            <input type="text" id="itemName" placeholder="e.g. Conveyor Belt A">
+        </div>
+
+        <div class="form-group">
+            <label>LOCATION</label>
+            <input type="text" id="location" placeholder="e.g. Warehouse 1, Aisle 4">
+        </div>
+
+        <div class="form-group">
+            <label>DESCRIPTION</label>
+            <input type="text" id="description" placeholder="Briefly describe the damage">
+        </div>
+
+        <div class="form-group">
+            <label>PHOTO VERIFICATION</label>
+            <div class="btn-group">
+                <button type="button" class="btn-secondary" id="btnCamera">📸 Use Camera</button>
+                <button type="button" class="btn-secondary" id="btnUpload">📁 Upload</button>
+            </div>
+            
+            <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            
+            <div id="media-container">
+                <video id="video" autoplay playsinline style="display: none;"></video>
+                <img id="preview" style="display: none;">
+            </div>
+            <button type="button" class="btn-secondary" id="btnCapture" style="display: none; width: 100%; margin-bottom: 15px;">Take Photo</button>
+        </div>
+
+        <button type="button" class="btn-primary" id="btnSubmit">🚀 SUBMIT RECORD</button>
+        <div id="status"></div>
+    </div>
+
+    <!-- Hidden canvas for image compression -->
+    <canvas id="canvas" style="display: none;"></canvas>
+
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx1S75fijJzz4WH-jX7rlnMIF0cfPfa1xV-iw_LIOy3G4i3qf7AHXsmLrqTHnMWaU7T/exec";
+
+        const btnCamera = document.getElementById('btnCamera');
+        const btnUpload = document.getElementById('btnUpload');
+        const fileInput = document.getElementById('fileInput');
+        const video = document.getElementById('video');
+        const preview = document.getElementById('preview');
+        const btnCapture = document.getElementById('btnCapture');
+        const mediaContainer = document.getElementById('media-container');
+        const canvas = document.getElementById('canvas');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const statusTxt = document.getElementById('status');
+
+        let base64Image = null;
+        let stream = null;
+
+        // --- 1. UPLOAD PHOTO LOGIC ---
+        btnUpload.addEventListener('click', () => {
+            stopCamera();
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    compressImage(event.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // --- 2. CAMERA LOGIC ---
+        btnCamera.addEventListener('click', async () => {
+            preview.style.display = 'none';
+            base64Image = null;
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                video.srcObject = stream;
+                mediaContainer.style.display = 'block';
+                video.style.display = 'block';
+                btnCapture.style.display = 'block';
+            } catch (err) {
+                alert("Camera access denied or unavailable.");
+            }
+        });
+
+        btnCapture.addEventListener('click', () => {
+            // Draw video frame to canvas
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Compress and save
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+            compressImage(dataUrl);
+            
+            stopCamera();
+        });
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            video.style.display = 'none';
+            btnCapture.style.display = 'none';
+        }
+
+        // --- 3. COMPRESS IMAGE (To prevent Apps Script payload errors) ---
+        function compressImage(dataUrl) {
+            const img = new Image();
+            img.onload = function() {
+                const max_width = 800; // Resize width to 800px max
+                const scaleSize = max_width / img.width;
+                canvas.width = max_width;
+                canvas.height = img.height * scaleSize;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                base64Image = canvas.toDataURL('image/jpeg', 0.7); // 70% Quality
+                
+                preview.src = base64Image;
+                mediaContainer.style.display = 'block';
+                preview.style.display = 'block';
+            }
+            img.src = dataUrl;
+        }
+
+        // --- 4. SUBMIT LOGIC ---
+        btnSubmit.addEventListener('click', async () => {
+            const reportedBy = document.getElementById('reportedBy').value;
+            const itemName = document.getElementById('itemName').value;
+            const location = document.getElementById('location').value;
+            const description = document.getElementById('description').value;
+
+            if (!reportedBy || !itemName || !base64Image) {
+                statusTxt.style.color = "#ff4c4c"; // Red
+                statusTxt.innerText = "Error: Please fill fields and add an image.";
+                return;
+            }
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "⏳ SUBMITTING...";
+            statusTxt.style.color = "#ccff00"; // Neon Green
+            statusTxt.innerText = "Sending data to Google Sheets...";
+
+            const payload = {
+                reportedBy: reportedBy,
+                itemName: itemName,
+                location: location,
+                description: description,
+                image: base64Image
+            };
+
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (result.result === "success") {
+                    statusTxt.innerText = "✅ Record Submitted Successfully!";
+                    // Reset Form
+                    document.getElementById('reportedBy').value = '';
+                    document.getElementById('itemName').value = '';
+                    document.getElementById('location').value = '';
+                    document.getElementById('description').value = '';
+                    mediaContainer.style.display = 'none';
+                    base64Image = null;
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                statusTxt.style.color = "#ff4c4c";
+                statusTxt.innerText = "❌ Error: " + error.message;
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "🚀 SUBMIT RECORD";
+            }
+        });
+    </script>
+</body>
+</html>
